@@ -4,17 +4,20 @@ import com.example.core.domain.*;
 import com.example.core.ports.RepositoryPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Service
 public class GuestbookService {
     private static final Logger log = LoggerFactory.getLogger(GuestbookService.class);
-    private final RepositoryPort repository;
 
-    public GuestbookService(RepositoryPort repository) {
-        this.repository = repository;
-    }
+    @Autowired
+    private RepositoryPort repository;
+
+    public GuestbookService() {}
 
     public Comment addComment(String author, String text) {
         if (author == null || author.isBlank() || text == null || text.isBlank()) {

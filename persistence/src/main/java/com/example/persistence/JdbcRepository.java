@@ -1,29 +1,34 @@
 package com.example.persistence;
 
-import com.example.core.domain.Book;
-import com.example.core.domain.Comment;
-import com.example.core.domain.PageRequest;
+import com.example.core.domain.*;
 import com.example.core.ports.RepositoryPort;
+import org.springframework.stereotype.Repository;
 
+import javax.sql.DataSource;
 import java.sql.*;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
+import java.util.List;
+import java.util.ArrayList;
+import jakarta.annotation.PostConstruct;
 
+@Repository
 public class JdbcRepository implements RepositoryPort {
-    private final String dbUrl;
-    private final String dbUser;
-    private final String dbPass;
 
-    public JdbcRepository(String dbUrl, String dbUser, String dbPass) {
-        this.dbUrl = dbUrl;
-        this.dbUser = dbUser;
-        this.dbPass = dbPass;
+    private final DataSource dataSource;
+
+    // ДЕМОНСТРАЦІЯ: Constructor Injection (Ін'єкція через конструктор)
+    // Spring знайде бін DataSource (створений автоконфігурацією) і передасть сюди.
+    public JdbcRepository(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    @PostConstruct
+    public void initialize() {
+        initSchema();
     }
 
     private Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(dbUrl, dbUser, dbPass);
+        return dataSource.getConnection();
     }
 
     @Override
