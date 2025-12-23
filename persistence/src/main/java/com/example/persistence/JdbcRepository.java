@@ -2,16 +2,12 @@ package com.example.persistence;
 
 import com.example.core.domain.*;
 import com.example.core.ports.RepositoryPort;
-import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.Optional;
 import java.util.List;
 import java.util.ArrayList;
-import jakarta.annotation.PostConstruct;
-
-@Repository
 public class JdbcRepository implements RepositoryPort {
 
     private final DataSource dataSource;
@@ -22,7 +18,6 @@ public class JdbcRepository implements RepositoryPort {
         this.dataSource = dataSource;
     }
 
-    @PostConstruct
     public void initialize() {
         initSchema();
     }
