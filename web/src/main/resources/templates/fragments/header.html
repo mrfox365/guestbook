@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+<div th:fragment="header">
+    <nav style="background: #eee; padding: 10px; margin-bottom: 20px;">
+        <b th:text="#{app.title}">Guestbook</b> |
+        <a th:href="@{/books}" th:text="#{nav.home}">Home</a> |
+        <a th:href="@{/books/add}" th:text="#{nav.add}">Add</a>
+
+        <span style="float:right">
+                <a href="?lang=en">EN</a> | <a href="?lang=ua">UA</a>
+            </span>
+    </nav>
+    <hr/>
+</div>
+</body>
+</html>

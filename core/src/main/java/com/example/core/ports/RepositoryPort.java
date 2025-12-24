@@ -5,14 +5,20 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RepositoryPort {
-    // Comment methods
+    // --- Comment methods (залишаємо для сумісності, якщо треба) ---
     Comment saveComment(Comment comment);
     List<Comment> findAllComments();
     Optional<Comment> findCommentById(Long id);
     void deleteComment(Long id);
 
-    // Book methods
+    // --- Book methods (НОВІ) ---
     List<Book> searchBooks(PageRequest request);
     Optional<Book> findBookById(Long id);
-    void initSchema(); // Helper
+
+    void saveBook(Book book);
+
+    // ДОДАНО: видалення книги
+    void deleteBook(Long id);
+
+    void initSchema();
 }

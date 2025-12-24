@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{app.title}">Guestbook</title>
+</head>
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<h2 th:text="#{app.title}">List</h2>
+
+<div th:if="${#lists.isEmpty(books)}">
+    <p style="color: red;" th:text="#{msg.empty}">No books</p>
+</div>
+
+<table border="1" th:unless="${#lists.isEmpty(books)}">
+    <thead>
+    <tr>
+        <th th:text="#{table.id}">ID</th>
+        <th th:text="#{table.author}">Author</th>
+        <th th:text="#{table.title}">Title</th>
+        <th th:text="#{table.year}">Year</th>
+        <th th:text="#{table.actions}">Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="book : ${books}">
+        <td th:text="${book.id}">1</td>
+        <td th:text="${book.author}">Author</td>
+        <td th:text="${book.title}">Title</td>
+        <td th:text="${book.year}">2024</td>
+        <td>
+            <form th:action="@{/books/delete/{id}(id=${book.id})}" method="post">
+                <button type="submit" style="color: red;">X</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

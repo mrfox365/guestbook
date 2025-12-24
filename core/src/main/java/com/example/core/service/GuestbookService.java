@@ -1,49 +1,47 @@
 package com.example.core.service;
 
-import com.example.core.domain.*;
+import com.example.core.domain.Book;
+import com.example.core.domain.PageRequest;
 import com.example.core.ports.RepositoryPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 public class GuestbookService {
     private static final Logger log = LoggerFactory.getLogger(GuestbookService.class);
 
-    @Autowired
-    private RepositoryPort repository;
+    private final RepositoryPort repository;
 
-    public GuestbookService() {}
-
-    public Comment addComment(String author, String text) {
-        if (author == null || author.isBlank() || text == null || text.isBlank()) {
-            throw new IllegalArgumentException("Author and text are required");
-        }
-        Comment comment = new Comment(null, author, text, LocalDateTime.now());
-        Comment saved = repository.saveComment(comment);
-        log.info("INFO New comment created: id={}, author={}", saved.id(), saved.author());
-        return saved;
+    public GuestbookService(RepositoryPort repository) {
+        this.repository = repository;
     }
 
-    public void deleteComment(Long id) {
-        Comment comment = repository.findCommentById(id)
-                .orElseThrow(() -> new RuntimeException("Comment not found"));
+    // --- Методи для Книг ---
 
-        // Бізнес-правило: видалення тільки протягом 24 годин
-        if (comment.createdAt().isBefore(LocalDateTime.now().minusHours(24))) {
-            throw new IllegalStateException("Cannot delete comment older than 24 hours");
+    public void addBook(String title, String author, String isbn, int year) {
+        // Тут можна додати валідацію
+        if (title == null || title.isBlank()) {
+            throw new IllegalArgumentException("Title is required");
         }
+        Book book = new Book(null, title, author, isbn, year);
 
-        repository.deleteComment(id);
-        log.info("INFO Comment deleted: id={}", id);
+        repository.saveBook(book);
+        log.info("INFO New book added: title={}", title);
+    }
+
+    public void deleteBook(Long id) {
+        // Перевірка існування
+        repository.findBookById(id)
+                .orElseThrow(() -> new RuntimeException("Book not found"));
+
+        repository.deleteBook(id);
+        log.info("INFO Book deleted: id={}", id);
     }
 
     public List<Book> searchBooks(int page, int size, String sort, String query) {
-        // Дефолтні значення
         if (page < 1) page = 1;
         if (size < 1) size = 10;
         if (sort == null || sort.isBlank()) sort = "id";

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${errorTitle}">Error</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding-top: 50px; }
+        .error-box {
+            border: 1px solid red;
+            background-color: #fdd;
+            display: inline-block;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        h2 { color: #d8000c; }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="error-box">
+    <h2 th:text="${errorTitle}">Error Occurred</h2>
+    <p th:text="${errorMessage}">Details...</p>
+
+    <br/>
+    <a th:href="@{/books}">Повернутися до списку</a>
+</div>
+
+</body>
+</html>
