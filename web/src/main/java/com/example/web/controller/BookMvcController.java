@@ -2,6 +2,7 @@ package com.example.web.controller;
 
 import com.example.core.domain.Book;
 import com.example.core.service.GuestbookService;
+import com.example.web.service.MailService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -11,9 +12,11 @@ import org.springframework.web.bind.annotation.*;
 public class BookMvcController {
 
     private final GuestbookService service;
+    private final MailService mailService;
 
-    public BookMvcController(GuestbookService service) {
+    public BookMvcController(GuestbookService service, MailService mailService) {
         this.service = service;
+        this.mailService = mailService;
     }
 
     @GetMapping
@@ -32,6 +35,7 @@ public class BookMvcController {
     @PostMapping
     public String addBook(@ModelAttribute Book book) {
         service.addBook(book.title(), book.author(), book.isbn(), book.year());
+        mailService.sendNewBookEmail(book);
         return "redirect:/books";
     }
 
