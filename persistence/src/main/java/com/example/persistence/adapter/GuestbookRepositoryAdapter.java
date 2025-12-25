@@ -91,6 +91,27 @@ public class GuestbookRepositoryAdapter implements GuestbookRepositoryPort {
     @Override
     public Optional<User> findUserById(Long id) {
         return userRepository.findById(id)
-                .map(u -> new User(u.getId(), u.getUsername(), u.getRole()));
+                .map(u -> new User(u.getId(), u.getUsername(), u.getPassword(), u.getRole()));
+    }
+
+    @Override
+    public Optional<User> findUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .map(entity -> new User(
+                        entity.getId(),
+                        entity.getUsername(),
+                        entity.getPassword(),
+                        entity.getRole()));
+    }
+
+    @Override
+    public User saveUser(User user) {
+        UserEntity entity = new UserEntity();
+        entity.setUsername(user.username());
+        entity.setPassword(user.password());
+        entity.setRole(user.role());
+
+        var saved = userRepository.save(entity);
+        return new User(saved.getId(), saved.getUsername(), saved.getPassword(), saved.getRole());
     }
 }

@@ -1,17 +1,31 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-</head>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head></head>
 <body>
 <div th:fragment="header">
     <nav style="background: #eee; padding: 10px; margin-bottom: 20px;">
         <b th:text="#{app.title}">Guestbook</b> |
         <a th:href="@{/books}" th:text="#{nav.home}">Home</a> |
-        <a th:href="@{/books/add}" th:text="#{nav.add}">Add</a>
+
+        <span sec:authorize="hasRole('ADMIN')">
+            <a th:href="@{/books/add}" th:text="#{nav.add}">Add Book</a> |
+        </span>
 
         <span style="float:right">
-                <a href="?lang=en">EN</a> | <a href="?lang=ua">UA</a>
+            <span sec:authorize="isAuthenticated()">
+                <span th:text="#{auth.hello}">Привіт</span>,
+                <b sec:authentication="name">User</b>!
+
+                <form th:action="@{/logout}" method="post" style="display:inline;">
+                    <button type="submit" th:text="#{auth.logout}">Вийти</button>
+                </form>
             </span>
+            <span sec:authorize="isAnonymous()">
+                <a th:href="@{/login}" th:text="#{auth.login.btn}">Увійти</a>
+            </span>
+            | <a href="?lang=en">EN</a> | <a href="?lang=ua">UA</a>
+        </span>
     </nav>
     <hr/>
 </div>

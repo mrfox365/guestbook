@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="#{auth.register.title}">Реєстрація</title>
+</head>
+<body style="text-align: center; padding-top: 50px;">
+
+<h2 th:text="#{auth.register.title}">Реєстрація</h2>
+
+<form th:action="@{/register}" method="post">
+    <div>
+        <input type="text" name="username" th:placeholder="#{ph.username}" required/>
+    </div><br>
+    <div>
+        <input type="password" name="password" th:placeholder="#{ph.password}" required/>
+    </div><br>
+    <button type="submit" th:text="#{auth.register.btn}">Створити акаунт</button>
+</form>
+
+<a th:href="@{/login}" th:text="#{auth.have_account}">Вже маю акаунт</a>
+
+</body>
+</html>

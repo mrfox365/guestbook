@@ -3,19 +3,24 @@ package com.example.core.service;
 import com.example.core.domain.Book;
 import com.example.core.domain.Comment;
 import com.example.core.domain.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import com.example.core.ports.GuestbookRepositoryPort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class GuestbookService {
+public class GuestbookService implements UserDetailsService {
 
     private final GuestbookRepositoryPort repository;
+    private final PasswordEncoder passwordEncoder; // Будемо інжектити
 
-    // Spring автоматично підставить сюди реалізацію з модуля Persistence
-    public GuestbookService(GuestbookRepositoryPort repository) {
+    public GuestbookService(GuestbookRepositoryPort repository, PasswordEncoder passwordEncoder) {
         this.repository = repository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<Book> getAllBooks() {
@@ -50,5 +55,32 @@ public class GuestbookService {
     public User getUser(Long id) {
         return repository.findUserById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    public Long getUserId(String username) {
+        return repository.findUserByUsername(username)
+                .map(User::id)
+                .orElseThrow(() -> new RuntimeException("User not found: " + username));
+    }
+
+    // --- Метод для Spring Security ---
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = repository.findUserByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        // Перетворюємо наш Domain User у Spring Security User
+        return org.springframework.security.core.userdetails.User.builder()
+                .username(user.username())
+                .password(user.password()) // Тут має бути хеш
+                .roles(user.role())        // "ADMIN" або "USER"
+                .build();
+    }
+
+    // --- Метод реєстрації ---
+    public void registerUser(String username, String rawPassword) {
+        String encodedPassword = passwordEncoder.encode(rawPassword);
+        User newUser = new User(null, username, encodedPassword, "USER");
+        repository.saveUser(newUser);
     }
 }

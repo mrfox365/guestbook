@@ -21,4 +21,6 @@ public interface GuestbookRepositoryPort {
 
     // Users
     Optional<User> findUserById(Long id);
+    Optional<User> findUserByUsername(String username);
+    User saveUser(User user); // Для реєстрації
 }

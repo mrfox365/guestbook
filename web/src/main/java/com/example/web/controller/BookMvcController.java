@@ -51,9 +51,12 @@ public class BookMvcController {
 
     @PostMapping("/{bookId}/comments")
     public String addComment(@PathVariable Long bookId,
-                             @RequestParam Long userId,
-                             @RequestParam String text) {
+                             @RequestParam String text,
+                             java.security.Principal principal) {
+        String username = principal.getName();
+        Long userId = service.getUserId(username);
         service.addComment(bookId, userId, text);
+
         return "redirect:/books/" + bookId;
     }
 

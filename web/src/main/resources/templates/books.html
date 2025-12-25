@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec>
 <head>
     <meta charset="UTF-8">
     <title th:text="#{app.title}">Guestbook</title>
@@ -32,7 +32,7 @@
             <a th:href="@{/books/{id}(id=${book.id})}" th:text="${book.title}">Title</a>
         </td>
         <td th:text="${book.year}">2024</td>
-        <td>
+        <td sec:authorize="hasRole('ADMIN')">
             <form th:action="@{/books/delete/{id}(id=${book.id})}" method="post">
                 <button type="submit" style="color: red;">X</button>
             </form>

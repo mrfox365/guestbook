@@ -24,8 +24,6 @@
         <strong th:text="${c.author}">User</strong>:
         <span th:text="${c.text}">Text</span>
         <span style="color:gray; font-size:0.8em;" th:text="${#temporals.format(c.createdAt, 'dd.MM.yyyy')}"></span>
-
-        <span style="font-size:0.8em; color: #ccc;" th:text="#{msg.no_id}">(ID missing)</span>
     </li>
 </ul>
 
@@ -33,11 +31,6 @@
 
 <h3 th:text="#{label.leave_comment}">Leave a review:</h3>
 <form th:action="@{/books/{id}/comments(id=${book.id})}" method="post" style="background: #f9f9f9; padding: 15px; border-radius: 5px; border: 1px solid #ddd;">
-
-    <div style="margin-bottom: 10px;">
-        <label for="userId" th:text="#{label.user_id}">Your ID:</label>
-        <input type="number" id="userId" name="userId" placeholder="1" required style="width: 60px; padding: 5px;" />
-    </div>
 
     <div style="margin-bottom: 10px;">
         <label for="text" th:text="#{label.comment_text} + ':'">Review:</label><br>
