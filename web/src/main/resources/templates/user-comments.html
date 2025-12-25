@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{title.user_comments}">User Comments</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .comment-card { border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 8px; background-color: #f9f9f9; }
+        .meta { color: #555; font-size: 0.9em; margin-bottom: 5px; }
+        .book-link { color: #007bff; text-decoration: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<h1>
+    <span th:text="#{title.user_comments}">Comments</span>:
+    <span th:text="${username}">User</span>
+</h1>
+
+<div th:if="${#lists.isEmpty(comments)}">
+    <p th:text="#{msg.no_comments_user}">No comments yet.</p>
+</div>
+
+<div th:each="c : ${comments}" class="comment-card">
+    <div class="meta">
+        📅 <span th:text="${#temporals.format(c.createdAt, 'dd-MM-yyyy HH:mm')}">Date</span>
+        | 📖 <span th:text="#{label.book}">Book</span>:
+        <a th:href="@{/books/{id}(id=${c.bookId})}" class="book-link" th:text="${c.bookTitle}">Book Name</a>
+    </div>
+    <p th:text="${c.text}">Comment text...</p>
+</div>
+
+</body>
+</html>

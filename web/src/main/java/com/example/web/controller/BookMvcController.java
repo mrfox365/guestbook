@@ -1,6 +1,6 @@
 package com.example.web.controller;
 
-import com.example.core.domain.Book;
+import com.example.core.domain.Book; // Імпортуємо Record з Core
 import com.example.core.service.GuestbookService;
 import com.example.web.service.MailService;
 import org.springframework.stereotype.Controller;
@@ -21,31 +21,45 @@ public class BookMvcController {
 
     @GetMapping
     public String listBooks(Model model) {
-        var books = service.searchBooks(1, 100, "id", "");
-        model.addAttribute("books", books);
-        return "books";
+        model.addAttribute("books", service.getAllBooks());
+        return "books"; // Шаблон Thymeleaf
+    }
+
+    @GetMapping("/{id}")
+    public String viewBook(@PathVariable Long id, Model model) {
+        model.addAttribute("book", service.getBook(id)); // Сама книга
+        model.addAttribute("comments", service.getCommentsByBook(id)); // Коментарі до неї
+        return "book-details"; // Шаблон Thymeleaf
     }
 
     @GetMapping("/add")
     public String showAddForm(Model model) {
+        // Створюємо порожній Record для форми (id = null)
         model.addAttribute("book", new Book(null, "", "", "", 2024));
         return "book-form";
     }
 
     @PostMapping
     public String addBook(@ModelAttribute Book book) {
-        service.addBook(book.title(), book.author(), book.isbn(), book.year());
+        service.addBook(book);
+
+        // Відправляємо лист
         mailService.sendNewBookEmail(book);
+
         return "redirect:/books";
+    }
+
+    @PostMapping("/{bookId}/comments")
+    public String addComment(@PathVariable Long bookId,
+                             @RequestParam Long userId,
+                             @RequestParam String text) {
+        service.addComment(bookId, userId, text);
+        return "redirect:/books/" + bookId;
     }
 
     @PostMapping("/delete/{id}")
     public String deleteBook(@PathVariable Long id) {
-        try {
-            service.deleteBook(id);
-        } catch (Exception e) {
-            System.err.println("Delete failed: " + e.getMessage());
-        }
+        service.deleteBook(id);
         return "redirect:/books";
     }
 }

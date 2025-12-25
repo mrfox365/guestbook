@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${book.title}">Details</title>
+    <style>body { font-family: sans-serif; padding: 20px; }</style>
+</head>
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<h1 th:text="${book.title}">Title</h1>
+<p>
+    <span th:text="#{table.author} + ':'">Author:</span>
+    <strong th:text="${book.author}"></strong>
+    (<span th:text="#{label.year}">Year</span>: <span th:text="${book.year}"></span>)
+</p>
+
+<hr/>
+
+<h3 th:text="#{label.comments}">Reviews:</h3>
+<ul>
+    <li th:each="c : ${comments}">
+        <strong th:text="${c.author}">User</strong>:
+        <span th:text="${c.text}">Text</span>
+        <span style="color:gray; font-size:0.8em;" th:text="${#temporals.format(c.createdAt, 'dd.MM.yyyy')}"></span>
+
+        <span style="font-size:0.8em; color: #ccc;" th:text="#{msg.no_id}">(ID missing)</span>
+    </li>
+</ul>
+
+<hr/>
+
+<h3 th:text="#{label.leave_comment}">Leave a review:</h3>
+<form th:action="@{/books/{id}/comments(id=${book.id})}" method="post" style="background: #f9f9f9; padding: 15px; border-radius: 5px; border: 1px solid #ddd;">
+
+    <div style="margin-bottom: 10px;">
+        <label for="userId" th:text="#{label.user_id}">Your ID:</label>
+        <input type="number" id="userId" name="userId" placeholder="1" required style="width: 60px; padding: 5px;" />
+    </div>
+
+    <div style="margin-bottom: 10px;">
+        <label for="text" th:text="#{label.comment_text} + ':'">Review:</label><br>
+        <textarea id="text" name="text" rows="3" cols="50" required
+                  th:placeholder="#{label.placeholder_text}" style="padding: 5px;"></textarea>
+    </div>
+
+    <button type="submit" style="padding: 8px 15px; background: #28a745; color: white; border: none; cursor: pointer;"
+            th:text="#{btn.send}">Send</button>
+</form>
+
+</body>
+</html>
