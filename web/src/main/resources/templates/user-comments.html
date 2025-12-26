@@ -28,6 +28,16 @@
         📅 <span th:text="${#temporals.format(c.createdAt, 'dd-MM-yyyy HH:mm')}">Date</span>
         | 📖 <span th:text="#{label.book}">Book</span>:
         <a th:href="@{/books/{id}(id=${c.bookId})}" class="book-link" th:text="${c.bookTitle}">Book Name</a>
+
+        <form th:action="@{/comments/delete}" method="post" style="display:inline; float: right;">
+            <input type="hidden" name="bookId" th:value="${c.bookId}"/>
+            <input type="hidden" name="commentId" th:value="${c.id}"/>
+            <input type="hidden" name="createdAt" th:value="${c.createdAt} + 'Z'"/>
+            <button type="submit" style="color: white; background-color: #dc3545; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;"
+                    th:text="#{btn.delete}">
+                Delete
+            </button>
+        </form>
     </div>
     <p th:text="${c.text}">Comment text...</p>
 </div>

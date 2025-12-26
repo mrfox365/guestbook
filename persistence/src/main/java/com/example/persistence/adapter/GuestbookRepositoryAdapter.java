@@ -3,7 +3,9 @@ package com.example.persistence.adapter;
 import com.example.core.domain.Book;
 import com.example.core.domain.Comment;
 import com.example.core.domain.User;
-import com.example.core.ports.GuestbookRepositoryPort;
+import com.example.core.ports.BookRepositoryPort;
+import com.example.core.ports.CommentRepositoryPort;
+import com.example.core.ports.UserRepositoryPort;
 import com.example.persistence.entity.BookEntity;
 import com.example.persistence.entity.CommentEntity;
 import com.example.persistence.entity.UserEntity;
@@ -12,17 +14,17 @@ import com.example.persistence.repository.CommentRepository;
 import com.example.persistence.repository.UserRepository;
 import com.example.persistence.mapper.BookMapper;
 import com.example.persistence.mapper.CommentMapper;
+
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
 @Transactional
-public class GuestbookRepositoryAdapter implements GuestbookRepositoryPort {
+public class GuestbookRepositoryAdapter implements BookRepositoryPort, CommentRepositoryPort, UserRepositoryPort {
 
     private final BookRepository bookRepository;
     private final CommentRepository commentRepository;
@@ -38,6 +40,9 @@ public class GuestbookRepositoryAdapter implements GuestbookRepositoryPort {
         this.commentMapper = commentMapper;
     }
 
+    // ==========================================
+    // BookRepositoryPort
+    // ==========================================
     @Override
     public List<Book> findAllBooks() {
         return bookRepository.findAll().stream()
@@ -62,6 +67,9 @@ public class GuestbookRepositoryAdapter implements GuestbookRepositoryPort {
         bookRepository.deleteById(id);
     }
 
+    // ==========================================
+    // CommentRepositoryPort
+    // ==========================================
     @Override
     public List<Comment> findCommentsByUserId(Long userId) {
         return commentRepository.findByUserId(userId).stream()
@@ -84,10 +92,20 @@ public class GuestbookRepositoryAdapter implements GuestbookRepositoryPort {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         CommentEntity comment = commentMapper.createEntity(text, user, book);
-
         commentRepository.save(comment);
     }
 
+    @Override
+    public void deleteComment(Long bookId, Long commentId) {
+        // Просте видалення за ID.
+        // Якщо потрібно перевірити, чи належить коментар книзі, це можна зробити тут,
+        // але зазвичай достатньо видалення за ID коментаря.
+        commentRepository.deleteById(commentId);
+    }
+
+    // ==========================================
+    // UserRepositoryPort
+    // ==========================================
     @Override
     public Optional<User> findUserById(Long id) {
         return userRepository.findById(id)

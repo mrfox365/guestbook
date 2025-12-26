@@ -14,69 +14,65 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    // 1. Помилки валідації (невірні аргументи, пусті поля)
+    // 1. Validation errors
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public String handleValidation(IllegalArgumentException e, Model model) {
-        model.addAttribute("errorTitle", "Помилка валідації");
+        model.addAttribute("errorTitle", "Validation Error");
         model.addAttribute("errorMessage", e.getMessage());
         return "error";
     }
 
-    // 2. Помилки бізнес-логіки (конфлікти станів)
+    // 2. Business logic errors
     @ExceptionHandler(IllegalStateException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public String handleBusinessRule(IllegalStateException e, Model model) {
-        model.addAttribute("errorTitle", "Операція відхилена");
+        model.addAttribute("errorTitle", "Operation Declined");
         model.addAttribute("errorMessage", e.getMessage());
         return "error";
     }
 
-    // 3. НОВЕ: Помилка доступу (Security 403)
-    // Спрацьовує, коли юзер залогінений, але не має прав (ролі)
+    // 3. Security (403)
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public String handleAccessDenied(AccessDeniedException e, Model model) {
-        model.addAttribute("errorTitle", "Доступ заборонено (403)");
-        model.addAttribute("errorMessage", "У вас недостатньо прав для виконання цієї дії.");
+        model.addAttribute("errorTitle", "Access Denied (403)");
+        model.addAttribute("errorMessage", "You do not have permission to perform this action.");
         return "error";
     }
 
-    // 4. НОВЕ: Сторінка не знайдена (404)
-    // (Працює для Spring Boot 3+, якщо ви звертаєтесь до неіснуючих статичних ресурсів або URL)
+    // 4. Not Found (404)
     @ExceptionHandler(NoResourceFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public String handleNotFound(NoResourceFoundException e, Model model) {
-        model.addAttribute("errorTitle", "Сторінку не знайдено (404)");
-        model.addAttribute("errorMessage", "Ресурс, який ви шукаєте, не існує.");
+        model.addAttribute("errorTitle", "Page Not Found (404)");
+        model.addAttribute("errorMessage", "The resource you are looking for does not exist.");
         return "error";
     }
 
-    // 5. Всі інші помилки (Catch-all)
+    // 5. Catch-all
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public String handleAllExceptions(Exception e, Model model) {
-        // Логуємо помилку в консоль, щоб розробник бачив деталі
-        e.printStackTrace();
+        e.printStackTrace(); // Log to console
 
         String message = e.getMessage();
 
-        // Ручна перевірка на "Not Found", якщо сервіс кидає загальний RuntimeException
         if (message != null && message.toLowerCase().contains("not found")) {
-            model.addAttribute("errorTitle", "Не знайдено");
+            model.addAttribute("errorTitle", "Not Found");
             model.addAttribute("errorMessage", message);
             return "error";
         }
 
-        model.addAttribute("errorTitle", "Критична помилка");
-        model.addAttribute("errorMessage", "Щось пішло не так. Спробуйте пізніше. (" + e.getClass().getSimpleName() + ")");
+        model.addAttribute("errorTitle", "Critical Error");
+        model.addAttribute("errorMessage", "Something went wrong. Please try again later. (" + e.getClass().getSimpleName() + ")");
         return "error";
     }
 
     @GetMapping("/access-denied")
     public String accessDenied(Model model) {
-        model.addAttribute("errorTitle", "Доступ заборонено (403)");
-        model.addAttribute("errorMessage", "Вибачте, але у вас недостатньо прав для виконання цієї дії. Зверніться до адміністратора.");
-        return "error"; // Повертає ваш шаблон error.html
+        model.addAttribute("errorTitle", "Access Denied (403)");
+        model.addAttribute("errorMessage", "Sorry, you do not have permission to perform this action.");
+        return "error";
     }
 }

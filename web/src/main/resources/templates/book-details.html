@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title th:text="${book.title}">Details</title>
@@ -20,10 +20,20 @@
 
 <h3 th:text="#{label.comments}">Reviews:</h3>
 <ul>
-    <li th:each="c : ${comments}">
+    <li th:each="c : ${comments}" style="margin-bottom: 10px;">
         <strong th:text="${c.author}">User</strong>:
         <span th:text="${c.text}">Text</span>
-        <span style="color:gray; font-size:0.8em;" th:text="${#temporals.format(c.createdAt, 'dd.MM.yyyy')}"></span>
+        <span style="color:gray; font-size:0.8em;" th:text="${#temporals.format(c.createdAt, 'dd.MM.yyyy HH:mm')}"></span>
+
+        <form th:action="@{/comments/delete}" method="post" style="display:inline; margin-left: 10px;">
+            <input type="hidden" name="bookId" th:value="${book.id}"/>
+            <input type="hidden" name="commentId" th:value="${c.id}"/>
+            <input type="hidden" name="createdAt" th:value="${c.createdAt} + 'Z'"/>
+
+            <button type="submit" style="color: red; font-size: 0.8em; cursor: pointer; border: 1px solid red; background: none;">
+                ❌ <span th:text="#{btn.delete}">Delete</span>
+            </button>
+        </form>
     </li>
 </ul>
 
